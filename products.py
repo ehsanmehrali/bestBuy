@@ -38,7 +38,7 @@ class Product:
             total_price = quantity * self.price
             return total_price
         else:
-            return f"The number of orders({quantity}) is greater than the quantity of '{self.name} in stock({self.quantity})."
+            raise ValueError(f"The number of orders({quantity}) is greater than the quantity of '{self.name} in stock({self.quantity}).")
 
 def main():
     bose = Product("Bose QuietComfort Earbuds", price=250, quantity=40)
