@@ -2,10 +2,8 @@
 import csv
 import os
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 CART_FILE_PATH = os.path.join(BASE_DIR, "data", "basket.csv")
-
 
 
 def add_to_cart(store, index, order_quantity):
