@@ -10,6 +10,7 @@ def make_order():
 
 
 def display_number_of_all_goods(store):
+    """ Total number of all goods. """
     total_number =store.get_total_quantity()
     print(f"Total of {total_number} items in store")
 
@@ -23,7 +24,7 @@ def display_goods(store):
 
 
 def start(store):
-    """ Display menu and call user commands(features) """
+    """ Display menu and call user commands(features). """
 
     # Personalized exit function
     quite =  lambda _: (print("\nHope to see you again at Best Buy!") or sys.exit())
