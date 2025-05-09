@@ -10,6 +10,7 @@ class Product:
         self.quantity = quantity
         self.active = True
 
+
     def get_quantity(self) -> int:
         return self.quantity
 
@@ -37,6 +38,3 @@ class Product:
             self.set_quantity(self.quantity)
             total_price = quantity * self.price
             return total_price
-        else:
-            raise ValueError(f"The number of orders({quantity}) is greater than the quantity of '{self.name} in stock({self.quantity}).")
-
