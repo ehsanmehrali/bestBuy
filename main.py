@@ -9,12 +9,14 @@ def make_order():
     print("order")
 
 
-def display_number_of_all_goods():
-    print("display_number_of_all_goods")
+def display_number_of_all_goods(store):
+    total_number =store.get_total_quantity()
+    print(f"Total of {total_number} items in store")
 
 
 def display_goods(store):
     """ Display all products along with their prices and quantities in stock. """
+    print("------")
     for i, _ in enumerate(store.products):
         print(f"{i + 1}. {store.products[i].name}, Price: ${store.products[i].price}: {store.products[i].quantity}")
     print("------")
@@ -39,8 +41,9 @@ def start(store):
             print("   ----------")
             for item, description in dispatcher_menu.items():
                 print(f"{item}. {description[0]}")
+
             user_choice = int(input("Please choose a number(1-4): "))
-            print("------")
+
             if 4 < user_choice < 1:
                 raise KeyError
             dispatcher_menu[user_choice][1](store)
