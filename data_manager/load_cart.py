@@ -3,6 +3,7 @@ import csv
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+TEMP_DIR = os.path.join(BASE_DIR, "data")
 CART_FILE_PATH = os.path.join(BASE_DIR, "data", "basket.csv")
 
 
@@ -19,6 +20,9 @@ def add_to_cart(store, index, order_quantity):
         raise IndexError(f"The number of orders({order_quantity}) is greater than the quantity of '{name} in stock({quantity_in_stock}).")
 
     product.buy(order_quantity)
+    if not os.path.exists(TEMP_DIR):
+        os.makedirs(TEMP_DIR)
+
     file_exists = os.path.isfile(CART_FILE_PATH)
     # Create shopping cart or append item to cart if exists.
     with open(CART_FILE_PATH, mode="a", newline='', encoding="utf-8") as file:
