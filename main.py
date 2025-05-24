@@ -1,109 +1,100 @@
-
 import sys
-
-from data_manager.load_cart import add_to_cart, show_cart, delete_cart
 from products import Product
 from store import Store
+from data_manager.load_cart import add_to_cart, show_cart, delete_cart
 
 
-def exit_store(store):
+def exit_store(store: Store) -> None:
     """ Personalized exit function and delete shopping cart before exit. """
-    # Hope to see you again at Best Buy!
     delete_cart(store)
     print("\nHope to see you again at Best Buy!")
     sys.exit()
 
 
-def make_order(store):
-    """ Make shopping order. """
+def make_order(store: Store) -> None:
+    """ Make shopping order by interacting with the user. """
     while True:
         try:
             display_goods(store)
-            number_of_types_of_goods = len(store.products)
-
-            print("When you want to finish order, enter q.")
-            product_index = input("Which product # do you want? ").strip().lower()
+            product_index = input("Which product # do you want (or 'q' to quit)? ").strip().lower()
 
             if product_index == "q":
                 exit_store(store)
 
             product_index = int(product_index)
-            if number_of_types_of_goods < product_index or int(product_index) < 1:
-                raise ValueError
+            if not 1 <= product_index <= len(store.products):
+                raise ValueError("Invalid product index.")
 
-            number_of_product = input("How many do you want? ")
-            if product_index == "q":
-                return
+            quantity = int(input("How many do you want? "))
+            if quantity <= 0:
+                raise ValueError("Quantity must be greater than zero.")
 
-            add_to_cart(store, int(product_index), int(number_of_product))
+            add_to_cart(store, product_index, quantity)
             show_cart(store)
-            back_to_shopping = input("Would you like to continue shopping(y-n)? ")
 
-            if back_to_shopping == "y":
-                continue
-            else:
+            continue_shopping = input("Would you like to continue shopping (y/n)? ").strip().lower()
+            if continue_shopping != "y":
                 break
-        except ValueError:
-            print("Invalid Input!")
-        except IndexError as e:
-            print(e)
+        except (ValueError, IndexError) as e:
+            print(f"Error: {e}")
 
 
-def display_number_of_all_goods(store):
-    """ Total number of all goods. """
-    total_number =store.get_total_quantity()
-    print(f"Total of {total_number} items in store")
-
-
-def display_goods(store):
+def display_goods(store: Store) -> None:
     """ Display all products along with their prices and quantities in stock. """
     print("-" * 55)
-    print(f"   {'Product Name:':<30} {'Price:':12} {'In Stock'}")
-    for i, _ in enumerate(store.products):
-        print(f"{i + 1}. {store.products[i].name:-<30} ${store.products[i].price:-<15} {store.products[i].quantity}")
+    print(f"{'Product Name':<30} {'Price':<10} {'In Stock'}")
+    for i, product in enumerate(store.products, start=1):
+        print(f"{i}. {product.name:<30} ${product.price:<10} {product.quantity}")
     print("-" * 55)
 
 
-def start(store):
-    """ Display menu and call user commands(features). """
-    dispatcher_menu = {
-        1: ("List all products in store", display_goods),
-        2: ("Show total amount in store", display_number_of_all_goods),
+def display_total_inventory(store: Store) -> None:
+    """ Display total number of items in store. """
+    total_quantity = store.get_total_quantity()
+    print(f"Total items in store: {total_quantity}")
+
+
+def start(store: Store) -> None:
+    """ Display menu and handle user input. """
+    menu = {
+        1: ("List all products", display_goods),
+        2: ("Show total inventory", display_total_inventory),
         3: ("Make an order", make_order),
         4: ("Show cart", show_cart),
-        5: ("Delete shopping cart", delete_cart),
+        5: ("Delete cart", delete_cart),
         6: ("Quit", exit_store)
     }
 
     while True:
         try:
-            print("\n   Store Menu")
+            print("\nStore Menu")
             print("-" * 55)
-            for item, description in dispatcher_menu.items():
+            for item, description in menu.items():
                 print(f"{item}. {description[0]}")
 
-            user_choice = int(input("Please choose a number(1-6): "))
+            user_choice = int(input("Please choose a number (1-6): "))
+            if user_choice not in menu:
+                raise ValueError("Invalid choice. Please choose between 1 and 6.")
 
-            if 4 < user_choice < 1:
-                raise KeyError
-            dispatcher_menu[user_choice][1](store)
+            menu[user_choice][1](store)
 
-        except (ValueError, KeyError):
-            print("Invalid Input!")
+        except (ValueError, KeyError) as e:
+            print(f"Invalid input: {e}")
         except KeyboardInterrupt:
             exit_store(store)
 
 
-def main():
-    # setup initial stock of inventory
-    product_list = [Product("MacBook Air M2", price=1450, quantity=100),
-                    Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                    Product("Google Pixel 7", price=500, quantity=250)
-                    ]
+def main() -> None:
+    """ Initialize store and run the main program. """
+    product_list = [
+        Product("MacBook Air M2", price=1450, quantity=100),
+        Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+        Product("Google Pixel 7", price=500, quantity=250)
+    ]
 
-    best_buy = Store(product_list)
-    start(best_buy)
+    store = Store(products=product_list)
+    start(store)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
